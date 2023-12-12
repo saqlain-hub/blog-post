@@ -6,7 +6,7 @@ import NewPost from "./pages/NewPost";
 import PostPage from "./pages/PostPage";
 import About from "./pages/About";
 import Missing from "./pages/Missing";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 function App() {
@@ -37,15 +37,26 @@ function App() {
     },
   ]);
   const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const navigate = useNavigate();
+
+  const handleDelete = (id) => {
+    const postsList = posts.filter((post) => post.id !== id);
+    setPosts(postsList);
+    navigate("/");
+  };
 
   return (
     <div className="App">
       <Header title="React JS Blog" />
-      <Nav />
+      <Nav search={search} setSearch={setSearch} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home posts={posts} />} />
         <Route path="/post" element={<NewPost />} />
-        <Route path="/post/:id" element={<PostPage />} />
+        <Route
+          path="/post/:id"
+          element={<PostPage posts={posts} handleDelete={handleDelete} />}
+        />
         <Route path="/about" element={<About />} />
         <Route path="*" element={<Missing />} />
       </Routes>
