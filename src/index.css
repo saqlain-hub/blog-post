@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"); */
 
 * {
   margin: 0;
@@ -74,11 +74,12 @@ body {
 .searchForm {
   width: 80%;
   padding: 1rem 0 0 0.75rem;
+  display: flex;
 }
 
 .searchForm input[type="text"] {
   font-family: "Open Sans", sans-serif;
-  width: 100%;
+  width: 380px;
   min-height: 48px;
   font-size: 1rem;
   padding: 0.25rem;
