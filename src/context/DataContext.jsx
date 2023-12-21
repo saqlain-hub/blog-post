@@ -1,21 +1,12 @@
-import Header from "./components/Header";
-import Nav from "./components/Nav";
-import Footer from "./components/Footer";
-import Home from "./pages/Home";
-import NewPost from "./pages/NewPost";
-import EditPost from "./components/EditPost";
-import PostPage from "./pages/PostPage";
-import About from "./pages/About";
-import Missing from "./pages/Missing";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import api from "./api/posts";
-import useWindowSize from "./hooks/useWindowSize";
-// import useAxiosFetch from "./hooks/useAxiosFetch";
-import { DataProvider } from "./context/DataContext";
+import api from "../api/posts";
+import useWindowSize from "../hooks/useWindowSize";
 
-function App() {
+const DataContext = createContext({});
+
+export const DataProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -25,14 +16,6 @@ function App() {
   const [editBody, setEditBody] = useState("");
   const navigate = useNavigate();
   const { width } = useWindowSize();
-
-  // const { data, fetchError, isLoading } = useAxiosFetch(
-  //   "http://localhost:3500/posts"
-  // );
-
-  // useEffect(() => {
-  //   setPosts(data);
-  // }, [data]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -62,7 +45,6 @@ function App() {
     );
     setSearchResults(filteredResults.reverse());
   }, [posts, search]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
@@ -108,59 +90,9 @@ function App() {
       console.log(`Error: ${err.message}`);
     }
   };
-
   return (
-    <div className="App">
-      <DataProvider>
-        <Header title="React JS Blog" width={width} />
-        <Nav search={search} setSearch={setSearch} />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                posts={searchResults}
-                // fetchError={fetchError}
-                // isLoading={isLoading}
-              />
-            }
-          />
-          <Route
-            path="/post"
-            element={
-              <NewPost
-                handleSubmit={handleSubmit}
-                postTitle={postTitle}
-                setPostTitle={setPostTitle}
-                postBody={postBody}
-                setPostBody={setPostBody}
-              />
-            }
-          />
-          <Route
-            path="/edit/:id"
-            element={
-              <EditPost
-                posts={posts}
-                handleEdit={handleEdit}
-                editTitle={editTitle}
-                setEditTitle={setEditTitle}
-                editBody={editBody}
-                setEditBody={setEditBody}
-              />
-            }
-          />
-          <Route
-            path="/post/:id"
-            element={<PostPage posts={posts} handleDelete={handleDelete} />}
-          />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<Missing />} />
-        </Routes>
-        <Footer />
-      </DataProvider>
-    </div>
+    <DataContext.Provider value={{ width }}> {children} </DataContext.Provider>
   );
-}
+};
 
-export default App;
+export default DataContext;
